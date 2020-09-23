@@ -1,0 +1,53 @@
+#!/bin/bash
+# /etc/init.d/sys-daemon
+#
+
+### BEGIN INIT INFO
+# Provides:          sys-daemon
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: start sys-daemon on boot
+### END INIT INFO
+
+if [ ! -f /tmp/sys-daemon.dmon]; then
+	./home/josh/ca1/code/my-own-daemon
+	touch /tmp/sys-daemon.dmon
+fi
+
+
+case "$1" in
+	start)
+		echo "Attempting to start my own daemon"
+		if [ ! -f /tmp/sys-daemon.dmon ]; then
+			./home/josh/ca1/code/my-own-daemon
+			touch /tmp/sys-daemon.dmon
+		else
+			echo "Daemon is already running, if you killed the daemon via terminal remove file in /tmp"
+		fi
+
+		;;
+	stop)
+		echo "Stopping daemon"
+		killall my-own-daemon
+		echo "Kill issued CYA"
+		rm /tmp/sys-daemon.dmon
+
+		;;
+	backup)
+		echo "Attempting a backup" 
+		./home/josh/ca1/code/my-own-daemon backup
+		;;
+	transfer)
+		echo "Attempting a transfer"
+		./home/josh/ca1/code/my-own-daemon transfer
+		;;
+
+	*)
+		echo "my-own-daemon arguments - start - stop - backup"
+		exit 1
+		;;
+esac
+
+exit 0
